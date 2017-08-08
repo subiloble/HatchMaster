@@ -1,0 +1,90 @@
+<html>
+<script type="text/javascript" src="chart.js"></script>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width">
+  <title>Hatch</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto" type="text/css">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Lato" type="text/css">
+  <link href="https://fonts.googleapis.com/css?family=Open+Sans:400" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Titillium+Web:300" rel="stylesheet">
+  <link rel="stylesheet" href="stylesheet.css" type="text/css">
+  <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons">
+  <link rel="stylesheet" href="https://code.getmdl.io/1.3.0/material.blue-indigo.min.css">
+  <link rel="shortcut icon" href="favicon.ico" type="image/x-icon">
+  <link rel="icon" href="favicon.ico" type="image/x-icon">
+  <script defer src="https://code.getmdl.io/1.3.0/material.min.js"></script>
+  <script src="style.js"></script>
+</head>
+<body>
+  <div id="sideNav" class="sidenav">
+    <div class="navtitle">
+      Hatch
+    </div><hr>
+    <a href="javascript:void(0)" class="closebtn" onclick="closeNav()">&times;</a>
+    <a href="index.html">Home</a>
+    <a href="task.html">View tasks</a>
+    <a href="test.html">Test analysis</a>
+  </div>
+  <div class="topNavBar">
+    <span class="toggle-sidenav" onclick="openNav()">
+      <i class="material-icons">menu</i>
+    </span>
+    <h3 style="color: #FFFFFF; float: left; margin-left: 60px; margin-top: 13px; font-size: 30px;">Hatch</h3>
+  </div>
+  <br><br>
+  <div id="chart_div"></div>
+  <div id="chart_form">
+  <div class="mdl-textfield mdl-js-textfield mdl-textfield--floating-label">
+    <input id="ad" type="text" class="mdl-textfield__input"></input>
+    <label class="mdl-textfield__label">Test Results (in %)</label>
+    </div><br>
+  <button onclick="add()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">Add</button>
+  <button onclick="refresh()" class="mdl-button mdl-js-button mdl-button--raised mdl-js-ripple-effect mdl-button--accent">refresh</button>
+  </div>
+</body>
+
+<script>
+  google.charts.load('current', {packages: ['corechart', 'line']});
+  google.charts.setOnLoadCallback(drawBasic);
+  var a=new Array();
+  if (localStorage.k == undefined) {localStorage.k = "-1"}
+    if (localStorage.hcl == undefined){localStorage.hcl = "[]"}
+      a = JSON.parse(localStorage.hcl);
+
+    function refresh(){
+      localStorage.k = -1;
+      localStorage.hcl = "[]";
+      a = JSON.parse(localStorage.hcl);
+      drawBasic();
+    }
+
+    function add(){
+      var m = document.getElementById("ad").value;
+      localStorage.k = String(Number(localStorage.k) + 1);
+      a[Number(localStorage.k)] = [Number(localStorage.k)+1,Number(m)];
+      localStorage.hcl = JSON.stringify(a);
+      drawBasic();
+    }
+
+    function drawBasic() {
+      var data = new google.visualization.DataTable();
+      data.addColumn('number', 'X')
+      data.addColumn('number', 'Scores');
+      for (var i = a.length - 1; i >= 0; i--) {
+        data.addRows([a[i]]);
+      }
+
+      var options = {
+        vAxis: {
+          title: 'Scores/%'
+        }
+      };
+
+      var chart = new google.visualization.LineChart(document.getElementById('chart_div'));
+
+      chart.draw(data, options);
+    }
+  </script>
+  </html>
