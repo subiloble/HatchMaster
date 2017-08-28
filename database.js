@@ -4,6 +4,7 @@ var db = openDatabase("MyData","","My Database",1024*100);
 
 function init(){
     if (localStorage.hatch==undefined){localStorage.hatch = "0";}
+    if (Number(localStorage.hatch)==NaN){localStorage.hatch = "0"}
     if (localStorage.luck==undefined){localStorage.luck = "1";}
     if (localStorage.normal==undefined){localStorage.normal = "0";}
     if (localStorage.rare==undefined){localStorage.rare = "0";}
@@ -19,7 +20,8 @@ function init(){
     document.getElementById("luck").innerHTML = "Bonus luck: "+localStorage.luck+"0%";
     if (Number(localStorage.hatch)<100){document.getElementById("egg").src = "egg.png";} else {document.getElementById("egg").src = "hatchedEgg.png";}
     if (Number(localStorage.hatch)<100){document.getElementById("egg2").src = "egg2.png";} else {document.getElementById("egg2").src = "hatchedEgg2.png";}
-    //showAllData();
+    if (Number(localStorage.hatch)<100){document.getElementById("p1").style.width=Number(localStorage.hatch)+"%"}
+    if (Number(localStorage.hatch)>=100){document.getElementById("p1").style.width="100%"}
 }
 
 function hideAllData(){
@@ -150,6 +152,8 @@ function showDetail(row){
         document.getElementById("hatchProgress").innerHTML = "Progress: "+localStorage.hatch+"%"; 
         if (Number(localStorage.hatch)<100){document.getElementById("egg").src = "egg.png";} else {document.getElementById("egg").src = "hatchedEgg.png";}
         if (Number(localStorage.hatch)<100){document.getElementById("egg2").src = "egg2.png";} else {document.getElementById("egg2").src = "hatchedEgg2.png";}
+    if (Number(localStorage.hatch)<100){document.getElementById("p1").style.width=Number(localStorage.hatch)+"%"}
+    if (Number(localStorage.hatch)>=100){document.getElementById("p1").style.width="100%"}
     }
     document.getElementById("edit").onclick = function(){edit(row);}
 }
@@ -176,35 +180,49 @@ function hatchEgg(){
         }
         if (localStorage.hatch<100){document.getElementById("egg").src = "egg.png";} else {document.getElementById("egg").src = "hatchedEgg.png";}
         if (Number(localStorage.hatch)<100){document.getElementById("egg2").src = "egg2.png";} else {document.getElementById("egg2").src = "hatchedEgg2.png";}
+    if (Number(localStorage.hatch)<100){document.getElementById("p1").style.width=Number(localStorage.hatch)+"%"}
+    if (Number(localStorage.hatch)>=100){document.getElementById("p1").style.width="100%"}
 }
 
 function normal(){
     localStorage.normal = String(Number(localStorage.normal)+1);
     document.getElementById("normal").innerHTML = localStorage.normal;
-    window.alert("A chicken has been added to your collection! You have gained some luck for the next hatch!");
+    document.getElementById("movie").classList.remove('stop');
+    document.getElementById("movie").style.display = "inline";
+    document.getElementById("hatch").style.display = "none";
+    var t=setTimeout("document.getElementById('movie').style.display = 'none';document.getElementById('n').style.display = 'inline';document.getElementById('movie').classList.add('stop')",3200);
 }
 
 function rare(){
     localStorage.rare = String(Number(localStorage.rare)+1);
     document.getElementById("rare").innerHTML = localStorage.rare;
+    document.getElementById("movie").classList.remove('stop');
+    document.getElementById("movie").style.display = "inline";
+    document.getElementById("hatch").style.display = "none";
     localStorage.luck = "1";
-    window.alert("Your luck is not bad. A lark has been added to your collection!");
+    var t=setTimeout("document.getElementById('movie').style.display = 'none';document.getElementById('r').style.display = 'inline';document.getElementById('movie').classList.add('stop')",3200);
     document.getElementById("luck").innerHTML = "Bonus luck: "+localStorage.luck+"0%";
 }
 
 function superRare(){
     localStorage.superRare = String(Number(localStorage.superRare)+1);
     document.getElementById("superRare").innerHTML = localStorage.superRare;
+    document.getElementById("movie").classList.remove('stop');
+    document.getElementById("movie").style.display = "inline";
+    document.getElementById("hatch").style.display = "none";
     localStorage.luck = "1";
-    window.alert("Good luck! A silver-throated bushtit has been added to your collection!");
+    var t=setTimeout("document.getElementById('movie').style.display = 'none';document.getElementById('sr').style.display = 'inline';document.getElementById('movie').classList.add('stop')",3200);
     document.getElementById("luck").innerHTML = "Bonus luck: "+localStorage.luck+"0%";
 }
 
 function superiorSuperRare(){
     localStorage.superiorSuperRare = String(Number(localStorage.superiorSuperRare)+1);
     document.getElementById("superiorSuperRare").innerHTML = localStorage.superiorSuperRare;
+    document.getElementById("movie").classList.remove('stop');
+    document.getElementById("movie").style.display = "inline";
+    document.getElementById("hatch").style.display = "none";
     localStorage.luck = "1";
-    window.alert("Unbelievable! A dragon has been added to your collection!");
+    var t=setTimeout("document.getElementById('movie').style.display = 'none';document.getElementById('ssr').style.display = 'inline';document.getElementById('movie').classList.add('stop')",3200);
     document.getElementById("luck").innerHTML = "Bonus luck: "+localStorage.luck+"0%";
 }
 
@@ -250,7 +268,7 @@ function order(){
                 }
                 for(var i=0;i<rs.rows.length-1;i++){
                     for(var j=i+1;j<rs.rows.length;j++){
-                        if ((rs.rows.item(i).Importance/(rs.rows.item(i).Due+1))<(rs.rows.item(j).Importance/(rs.rows.item(j).Due+1))){
+                        if ((rs.rows.item(i).Importance/(rs.rows.item(i).Due)+Math.sqrt(rs.rows.item(i).Difficulty))<(rs.rows.item(j).Importance/(rs.rows.item(j).Due)+Math.sqrt(rs.rows.item(j).Difficulty))){
                             tempo = a[i];
                             a[i] = a[j];
                             a[j] = tempo;
@@ -288,6 +306,7 @@ function finish(){
 function hatchPage(){
     document.getElementById("hatch").style.display = "inline";
     document.getElementById("k").style.display = "none";
+
 }
 
 function pageHide(){
@@ -306,7 +325,31 @@ function settingHide(){
 }
 
 function set(){
-    localStorage.ratio = document.getElementById("setRatio").value;
+    if(Number(document.getElementById("setRatio").value)<=100 & Number(document.getElementById("setRatio").value)>=1) {
+        localStorage.ratio = document.getElementById("setRatio").value;
+    }else{
+        window.alert("Please key in a number between 1 and 10.");
+    }
+}
+
+function endn(){
+    document.getElementById("n").style.display = "none";
+    document.getElementById("hatch").style.display = "inline";
+}
+
+function endr(){
+    document.getElementById("r").style.display = "none";
+    document.getElementById("hatch").style.display = "inline";
+}
+
+function endsr(){
+    document.getElementById("sr").style.display = "none";
+    document.getElementById("hatch").style.display = "inline";
+}
+
+function endssr(){
+    document.getElementById("ssr").style.display = "none";
+    document.getElementById("hatch").style.display = "inline";
 }
 
 function edit(row){
@@ -337,3 +380,6 @@ function edit(row){
     } else {window.alert("The selected value for Difficulty and Importance should on a scale of 0-10.");}
     }
 }
+
+
+
